@@ -9,5 +9,8 @@ description = "A framework-free minimal Agent Runtime for an interview exercise"
 requires-python = ">=3.10"
 dependencies = ["openai>=1.0.0"]
 
+[tool.setuptools.packages.find]
+include = ["app*"]
+
 [tool.pytest.ini_options]
 markers = ["real_llm: calls the real DeepSeek API and requires DEEPSEEK_API_KEY"]
