@@ -31,12 +31,14 @@ pip install -e . pytest
 cp .env.example .env
 ```
 
-不要把 `.env` 提交到 Git。导出真实 API Key：
+编辑 `.env`，填入一次真实 API Key：
 
 ```bash
-export DEEPSEEK_API_KEY='your-key'
-export DEEPSEEK_MODEL='deepseek-chat'
+DEEPSEEK_API_KEY=your-key
+DEEPSEEK_MODEL=deepseek-chat
 ```
+
+程序启动时会自动读取当前项目目录下的 `.env`，并且 `.gitignore` 已排除它；不要把 `.env` 提交到 Git。你也可以使用 `export DEEPSEEK_API_KEY=...`，环境变量会优先于 `.env`，适合临时替换 Key 或 CI。
 
 运行一次对话：
 

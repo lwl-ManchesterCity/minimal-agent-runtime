@@ -2,6 +2,7 @@ from __future__ import annotations
 
 import json
 import os
+from pathlib import Path
 from typing import Protocol
 
 from .models import LLMResponse, ToolCall
@@ -11,10 +12,27 @@ class LLMClient(Protocol):
     def chat(self, messages: list[dict], tools: list[dict]) -> LLMResponse: ...
 
 
+def load_project_env(path: Path | None = None) -> None:
+    """Load simple KEY=VALUE settings from .env without overwriting shell variables."""
+    env_path = path or Path.cwd() / ".env"
+    if not env_path.is_file():
+        return
+    for raw_line in env_path.read_text(encoding="utf-8").splitlines():
+        line = raw_line.strip()
+        if not line or line.startswith("#") or "=" not in line:
+            continue
+        key, value = line.split("=", 1)
+        key = key.strip()
+        value = value.strip().strip('"').strip("'")
+        if key:
+            os.environ.setdefault(key, value)
+
+
 class DeepSeekClient:
     """Thin provider adapter; the runtime does not depend on the OpenAI SDK directly."""
 
     def __init__(self, api_key: str | None = None, model: str | None = None, thinking: bool = False):
+        load_project_env()
         self.api_key = api_key or os.getenv("DEEPSEEK_API_KEY")
         self.model = model or os.getenv("DEEPSEEK_MODEL", "deepseek-chat")
         self.thinking = thinking or os.getenv("DEEPSEEK_THINKING", "false").lower() == "true"
