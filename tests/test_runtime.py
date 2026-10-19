@@ -51,6 +51,14 @@ class RuntimeTests(unittest.TestCase):
             second_messages = llm.calls[1][0]
             self.assertTrue(any(message["role"] == "tool" and "Guangzhou" in message["content"] for message in second_messages))
 
+    def test_reminder_instruction_is_explicit_in_model_context(self) -> None:
+        with tempfile.TemporaryDirectory() as directory:
+            llm = FakeLLM([LLMResponse(content="I need a tool before responding.")])
+            service, _ = make_service(Path(directory), llm)
+            service.chat("A", "weather", "Remind me to bring an umbrella")
+            system_prompt = llm.calls[0][0][0]["content"]
+            self.assertIn("MUST call todo with action=add", system_prompt)
+
     def test_follow_up_reuses_prior_conversation_and_tool_result(self) -> None:
         with tempfile.TemporaryDirectory() as directory:
             llm = FakeLLM([

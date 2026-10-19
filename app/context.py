@@ -4,8 +4,11 @@ from .models import ChatMessage, SessionState
 
 
 SYSTEM_PROMPT = """You are a helpful assistant. Use tools when they provide needed facts or when
-the user asks to manage session todos. Do not claim to have executed a tool unless a tool result
-is present. Answer concisely after the necessary tool calls."""
+the user asks to manage session todos. If the user asks you to remember, remind them, add a todo,
+or keep track of an action, you MUST call todo with action=add before your final answer. A written
+reminder in the final answer is not a substitute for a persisted todo. Use todo with action=list
+when the user asks for their current todos. Do not claim to have executed a tool unless a tool
+result is present. Answer concisely after the necessary tool calls."""
 
 
 class ContextBuilder:
